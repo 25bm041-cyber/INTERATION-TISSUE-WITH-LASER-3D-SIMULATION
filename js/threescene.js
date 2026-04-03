@@ -1,44 +1,44 @@
-let scene, camera, renderer, laser;
+let scene, camera, renderer;
 
 function init3D() {
 
+    // Scene
     scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
 
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / 500, 0.1, 1000);
-    camera.position.z = 10;
+    // Camera
+    camera = new THREE.PerspectiveCamera(75, 2, 0.1, 1000);
+    camera.position.z = 5;
 
+    // Renderer
     renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, 500);
+    renderer.setSize(800, 400);
 
     document.getElementById("sceneContainer").appendChild(renderer.domElement);
 
-    // 🧱 Tissue layers
-    createLayer(0, 0xff9999); // Skin
-    createLayer(-1, 0xffff99); // Fat
-    createLayer(-2, 0xff6666); // Muscle
+    // Light
+    let light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(light);
 
-    // 🔴 Laser beam
-    let geometry = new THREE.CylinderGeometry(0.1, 0.1, 5);
-    let material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    laser = new THREE.Mesh(geometry, material);
+    // TEST OBJECT (Green Cube)
+    let geometry = new THREE.BoxGeometry(1, 1, 1);
+    let material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    let cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
 
-    laser.rotation.z = Math.PI / 2;
-    laser.position.x = -5;
+    // Render loop
+    function animate() {
+        requestAnimationFrame(animate);
 
-    scene.add(laser);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        renderer.render(scene, camera);
+    }
 
     animate();
 }
 
-function createLayer(y, color) {
-    let geometry = new THREE.BoxGeometry(8, 1, 3);
-    let material = new THREE.MeshBasicMaterial({ color: color });
-    let layer = new THREE.Mesh(geometry, material);
-    layer.position.y = y;
-    scene.add(layer);
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-}
+// IMPORTANT
+init3D();
